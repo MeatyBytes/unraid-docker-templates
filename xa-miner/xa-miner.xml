@@ -1,0 +1,127 @@
+<?xml version="1.0"?>
+<Container version="2">
+  <Name>xa-miner</Name>
+  <Repository>scprime/xaminer</Repository>
+  <Registry>https://hub.docker.com/r/scprime/xaminer/</Registry>
+  <Network>br0</Network>
+  <MyIP>192.168.1.111</MyIP>
+  <Shell>bash</Shell>
+  <Privileged>false</Privileged>
+  <Support>https://hub.docker.com/r/scprime/xaminer/</Support>
+  <Project>https://scpri.me/</Project>
+  <Overview>ScPrime is a cryptocurrency project targeting public cloud services with a blockchain based ecosystem to pay individuals to store data around the globe using smart contracts and cryptographic proofs to ensure accuracy, security and redundancy.&#xD;
+&#xD;
+This repo uses the Xa-Miner Engine official docker container as it's source.  It is the FULL license version and setup of the xa-miner.  To use the full version you will need to have purchased a full license and have it linked to your provided id.  You may go through the setup process to generate a new provider id to link to your license.&#xD;
+&#xD;
+Metadata folders should be stored on a dedicated 'Unassiged Device".  For optimal performance, a  nvme or ssd would do nicely.  Don't use the cache drive, if it fills up (as they are designed for) then your metadata will fail to update and will most likely corrupt your metadata (this may lead to you loosing storage contracts and indexes to the provider storage data).  If you don't have a dedicated device (or close to it), store your metadata on a share on the unraid array.  While a parity drive may protect data against drive failures, it won't protect you from data corruption.  Backup your metadata folder on a regular basis.&#xD;
+&#xD;
+&#xD;
+Upgrading from Basic:&#xD;
+It's advised you keep your basic container incase you need to revert back to it for any reason.  I have been using the container myself for sometime without any issues so far.  It has been tested for updates.  You are not required to use the installer from SCPrime to upgrade your instance.  When SCPrime release a new docker image, the standard docker update process has been sufficient.  You simply apply the update as you would for any other unraid container.&#xD;
+&#xD;
+  - Stop your old basic container before proceeding.&#xD;
+  - Before continuing, ensure you backup your current meta data folder.&#xD;
+  - You must complete the configuration before installing the container.  If you do not, a new provider id will most likely be generated, causing the miner to fail its license checks.  You should note down all your settings from the basic container, or have the config displayed side-by-side while you configure this container.&#xD;
+  - Create a new directory (Populate Meta Data Path with this directory) : mkdir -p /mnt/disks/nvme1/appdata/xa-miner/meta&#xD;
+  - Copy your metadata folder : cp -R /mnt/cache/appdata/scprime/* /mnt/disks/nvme1/appdata/xa-miner/meta&#xD;
+  - In context of the above example you would populate variable App Path with: /mnt/disks/nvme1/appdata/xa-miner/&#xD;
+  - Before proceeding, ensure you have completed all config entries in this container, including the storage paths.  You may read further below to enlighten yourself on how to fill out the storage paths. ie..&#xD;
+Storage Path 1 :  /mnt/user/scp-storage/bigfolder&#xD;
+Storage Path 2 :  /mnt/user/scp-storage/evenbiggerfolder&#xD;
+&#xD;
+  - Start the container&#xD;
+  - ssh into unraid or jump into the unraid terminal&#xD;
+  - enter : docker exec -it xa-miner sh &#xD;
+  - edit file : /root/scprime/storage.json.  ie.. vi /root/scprime/storage.json&#xD;
+  - Change the storage path entries to the fully qualified path name for all your storage paths.&#xD;
+&#xD;
+Ie.. Lets say your basic container's 'Storage' variable is set to:&#xD;
+/mnt/user/scp-storage/&#xD;
+And you have added some folders&#xD;
+/mnt/user/scp-storage/bigfolder&#xD;
+/mnt/user/scp-storage/evenbiggerfolder&#xD;
+&#xD;
+storage.json will have these entries:&#xD;
+/scp-storage/bigfolder&#xD;
+/scp-storage/evenbiggerfolder&#xD;
+&#xD;
+In the context of the above example again, change the entries as follows:&#xD;
+/scp-storage/bigfolder -&amp;gt; /mnt/user/scp-storage/bigfolder&#xD;
+/scp-storage/evenbiggerfolder -&amp;gt; /mnt/user/scp-storage/evenbiggerfolder&#xD;
+&#xD;
+Container storage paths would be configured as&#xD;
+Storage Path 1 :  /mnt/user/scp-storage/bigfolder&#xD;
+Storage Path 2 :  /mnt/user/scp-storage/evenbiggerfolder&#xD;
+&#xD;
+&#xD;
+Config:&#xD;
+PORT:&#xD;
+Port number to use in your browser client to connect to the xa-miner GUI. Default is port 80 assuming you are using network type br0 (Where the container runs under it's own static IP address).  If you choose to use host or another network type, you may need to change the port.  If you change the port you will also need to update the WebUI variable in the "Advanced View".&#xD;
+&#xD;
+SCPRIME_WALLET_PASSWORD:&#xD;
+This is either your wallet password or seed phrase.  If you are setting up for the first time, this will be provided in the initial setup of your wallet.  If you are coming from the basic version, the seed has already been provided to you.  If you have made the choice to password protect your local cli instance of the wallet, you should use this instead of the seed.  Password protecting your local cli instance is recommended.  It allows you use it in configs, so as not to expose your seed.  If someone gets your password, they can only unlock the local cli instance of your wallet.  If someone get's your seed, they have the ability to spawn up your wallet on their own machine and will a full control over your wallet.&#xD;
+&#xD;
+App Path:&#xD;
+Stores the xa-miner application binaries such as the SPD and Supervisor.&#xD;
+&#xD;
+Meta Data Path:&#xD;
+Stores your provider details and config.  This folder should be backed up on a regular basis.  A general guide would be every 2 days.  But the choice is yours.  The older the backup the more issues you may encounter when re-instating it.  This may include the loss of storage provider data and contracts.&#xD;
+&#xD;
+HOST_ADDR:&#xD;
+Default is 4282.  For optimal performance and stability it is advised you port forward your public facing router to this address port.  Though it's not required as such, if you don't, there may be problems with the xa-miner detecting dropped connections and re-establishing the UPnP mappings when you come back online.  You will need to restart the container in such an event to force UPnP to re-establish the port mappings between your router and the miner.&#xD;
+&#xD;
+HOST_ADDR:&#xD;
+Default is 4283.  Same recommendations apply to this as they do to HOST_ADDR.&#xD;
+&#xD;
+SIAMUX_ADDR:&#xD;
+Default is 42820.  Port forwarding to this port is not required.  It uses a push method, whereas as the above ports use pull methods, and await for requests on these ports (technically the above ports both receive and make requests, but won't always initiate the conversation between peers on the network).&#xD;
+&#xD;
+Storage Paths:&#xD;
+Defines the paths used to store provider storage data.  These are usually paths to shares on your unraid array, where you can dedicate whole disks to a set of folders/folder. &#xD;
+&#xD;
+Paths must be fully qualified names.&#xD;
+&#xD;
+Note if you are upgrading from basic to full version you may have several folders, possibly even exceeding 6 folders.  You may add more container paths if you wish.  But keep this in mind, while the basic version would distribute data across all folders, the full version will only ever use one folder.  Once that folder fills, it will not use the other folders you have with free space.  If you do have several folders, it may beneficial to consolidate and resize your folders.  Using the spc command to resize and/or remove folders.  If you get a new drive, you can always add a new folder to the new drive and name the folder such that it alphabetically sits at the top, if you were to sort your folder names.  If you have named your container 'xa-miner', you may download the xa-miner installer to add the new path to the storage provider.  Alternatively you can use the 'scp host folder add' command to add the folder.  If you ssh to the container and enter: 'spc host'. Your new folder should appear at the top of the folder list.  If it does not, it will not be used.  The name of the active folder you wish to use must appear at the top of the sorted list.&#xD;
+When editing a storage path, you should click on the EDIT button.  Modify both the Container Path AND Host Path. You may also change the Default value if you wish.&#xD;
+&#xD;
+Disclaimer:&#xD;
+I am not liable or responsible in any way for any financial losses incurred from the use of this container.  Use at your own risk.&#xD;
+&#xD;
+Documentation:&#xD;
+https://docs.scpri.me/storageproviderindex&#xD;
+&#xD;
+Storage Network Status:&#xD;
+https://scpri.me/network&#xD;
+&#xD;
+Join the Discord for Help (Recommended):&#xD;
+https://discord.gg/scprime&#xD;
+&#xD;
+&#xD;
+SCPrime Official Repo:&#xD;
+https://hub.docker.com/r/scprime/xaminer/</Overview>
+  <Category>Crypto Currency:</Category>
+  <WebUI>http://[IP]:[PORT:80]/</WebUI>
+  <TemplateURL>https://raw.githubusercontent.com/MeatyBytes/unraid-docker-templates/master/xa-miner/xa-miner.xml</TemplateURL>
+  <Icon>https://raw.githubusercontent.com/rythmik/docker-templates/main/rythmik/images/scprime-icon.png</Icon>
+  <DonateText/>
+  <DonateLink/>
+  <Requires/>
+  <Config Name="PORT" Target="PORT" Default="80" Mode="" Description="" Type="Variable" Display="always" Required="true" Mask="false">80</Config>
+  <Config Name="SCPRIME_WALLET_PASSWORD" Target="SCPRIME_WALLET_PASSWORD" Default="" Mode="" Description="" Type="Variable" Display="always" Required="true" Mask="true"></Config>
+  <Config Name="App Path" Target="/root/scprime/" Default="/mnt/user/appdata/xa-miner/" Mode="rw" Description="" Type="Path" Display="always" Required="true" Mask="false">/mnt/disks/nvme1/appdata/scp1/xa-miner/</Config>
+  <Config Name="Meta data path" Target="/root/.scprime" Default="/mnt/user/appdata/xa-miner/meta/" Mode="rw" Description="This path holds your config settings, consensus, transactionpool, spd, etc..." Type="Path" Display="always" Required="true" Mask="false">/mnt/disks/nvme1/appdata/scp1/xa-miner/meta/</Config>
+  <Config Name="Storage Path 1" Target="/mnt/user/scp-storage/scp-docker-1/folder1/" Default="/mnt/user/scp-storage/scp-docker-1/folder1/" Mode="rw" Description="Add your storage paths as required.&#13;&#10;It's addvised you map each folder to its own variable." Type="Path" Display="always" Required="false" Mask="false">/mnt/user/scp-storage/scp-docker-1/folder1/</Config>
+  <Config Name="Storage Path 2" Target="/mnt/user/scp-storage/scp-docker-1/folder2/" Default="/mnt/user/scp-storage/scp-docker-1/folder2/" Mode="rw" Description="" Type="Path" Display="always" Required="false" Mask="false">/mnt/user/scp-storage/scp-docker-1/100gb-2/</Config>
+  <Config Name="Storage Path 3" Target="/mnt/user/scp-storage/scp-docker-1/folder3/" Default="/mnt/user/scp-storage/scp-docker-1/folder3/" Mode="rw" Description="" Type="Path" Display="always" Required="false" Mask="false"></Config>
+  <Config Name="Storage Path 4" Target="/mnt/user/scp-storage/scp-docker-1/folder4/" Default="/mnt/user/scp-storage/scp-docker-1/folder4/" Mode="rw" Description="" Type="Path" Display="always" Required="false" Mask="false"></Config>
+  <Config Name="Storage Path 5" Target="/mnt/user/scp-storage/scp-docker-1/folder5/" Default="/mnt/user/scp-storage/scp-docker-1/folder5/" Mode="rw" Description="" Type="Path" Display="always" Required="false" Mask="false"></Config>
+  <Config Name="Storage Path 6" Target="/mnt/user/scp-storage/scp-docker-1/folder6//" Default="/mnt/user/scp-storage/scp-docker-1/folder6/" Mode="rw" Description="" Type="Path" Display="always" Required="false" Mask="false"></Config>
+  <Config Name="HOST_ADDR" Target="HOST_ADDR" Default="4282" Mode="" Description="" Type="Variable" Display="always" Required="false" Mask="false">4282</Config>
+  <Config Name="HOST_HTTP_API_ADDR" Target="HOST_HTTP_API_ADDR" Default="4283" Mode="" Description="" Type="Variable" Display="always" Required="false" Mask="false">4283</Config>
+  <Config Name="SIAMUX_ADDR" Target="SIAMUX_ADDR" Default="42820" Mode="" Description="" Type="Variable" Display="always" Required="false" Mask="false">42820</Config>
+  <Config Name="PATH" Target="PATH" Default="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" Mode="" Description="" Type="Variable" Display="advanced" Required="true" Mask="false">/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin</Config>
+  <Config Name="Community Applications Conversion" Target="Community_Applications_Conversion" Default="true" Mode="" Description="" Type="Variable" Display="advanced" Required="false" Mask="false">true</Config>
+  <Config Name="Container Port 1" Target="8021" Default="8021" Mode="tcp" Description="" Type="Port" Display="advanced" Required="true" Mask="false">8021</Config>
+  <Config Name="HOST_PLATFORM" Target="HOST_PLATFORM" Default="linux" Mode="" Description="" Type="Variable" Display="advanced" Required="true" Mask="false">linux</Config>
+  <Config Name="xmINSTALL_TYPE" Target="xmINSTALL_TYPE" Default="Advanced" Mode="" Description="" Type="Variable" Display="advanced" Required="true" Mask="false">Advanced</Config>
+</Container>
