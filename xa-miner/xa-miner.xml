@@ -101,8 +101,8 @@ SCPrime Official Repo:&#xD;
 https://hub.docker.com/r/scprime/xaminer/</Overview>
   <Category>Crypto Currency:</Category>
   <WebUI>http://[IP]:[PORT:80]/</WebUI>
-  <TemplateURL>https://raw.githubusercontent.com/MeatyBytes/unraid-docker-templates/master/xa-miner/xa-miner.xml</TemplateURL>
-  <Icon>https://raw.githubusercontent.com/rythmik/docker-templates/main/rythmik/images/scprime-icon.png</Icon>
+  <TemplateURL>https://raw.githubusercontent.com/MeatyBytes/unraid-docker-templates/main/xa-miner/xa-miner.xml</TemplateURL>
+  <Icon>https://raw.githubusercontent.com/MeatyBytes/unraid-docker-templates/main/icons/scprime-icon.png</Icon>
   <DonateText/>
   <DonateLink/>
   <Requires/>
